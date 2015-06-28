@@ -51,7 +51,7 @@ uint8_t readFlag = 0;
 uint8_t strcnt = 0;
 
 
-const char version[] = "v2.0";
+const char version[] = "v2.0.dev";
 
 typedef struct cursor {
         uint32_t row;
@@ -107,9 +107,16 @@ void setup()
         tft.setTextSize(textSize);
         tft.setCursor(50, 50);
         tft.print("Hello ODROID-SHOW!");
-        tft.setCursor(250, 200);
+        tft.setCursor(320 - (strlen(version) * 16), 200);
         tft.print(version);
 
+        //foregroundColor = tft.Color565(0, 0, 255);
+        //row = 160;
+        //for (col = 0; col < 320; col++) {
+        //  tft.drawPixel(row, col, foregroundColor);
+        //}
+        //tft.fillRect(80, 60, 160, 120, tft.Color565(0, 0, 255));
+                
         delay(1000);
         tft.fillScreen(backgroundColor);
         tft.setCursor(0, 0);
@@ -117,6 +124,7 @@ void setup()
         Timer1.initialize(20000);
         Timer1.attachInterrupt(timerCallback);
 }
+
 void initPins()
 {
 	pinMode(ledPin, OUTPUT);
@@ -191,6 +199,9 @@ void readBtn()
                 btn2Releases = 0;
                 btn2Pushed = 1;
                 digitalWrite(6, LOW);
+                //Serial.println("Button 2 pressed");
+                //tft.drawPixel(row, col, foregroundColor);
+                tft.fillRect(80, 60, 160, 120, tft.Color565(0, 0, 255));
         }
 
         if (digitalRead(A1) && (btn2Releases == 0)) {
@@ -198,6 +209,8 @@ void readBtn()
                 btn2Presses = 0;
                 btn2Pushed = 0;
                 digitalWrite(6, HIGH);
+                //Serial.println("Button 2 released");
+                tft.fillRect(80, 60, 160, 120, tft.Color565(0, 0, 0));
         }
 
         if (!digitalRead(7) && (btn0Presses == 0)) {
@@ -210,6 +223,8 @@ void readBtn()
                         pwm += 30;
                 analogWrite(ledPin, pwm);
                 digitalWrite(3, LOW);
+                //Serial.println("Button 0 pressed");
+                tft.fillRect(80, 60, 160, 120, tft.Color565(255, 0, 0));
         }
 
         if (digitalRead(7) && (btn0Releases == 0)) {
@@ -217,6 +232,8 @@ void readBtn()
                 btn0Presses = 0;
                 btn0Pushed = 0;
                 digitalWrite(3, HIGH);
+                //Serial.println("Button 0 released");
+                tft.fillRect(80, 60, 160, 120, tft.Color565(0, 0, 0));
         }
 
         if (!digitalRead(A0) && (btn1Presses == 0)) {
@@ -229,6 +246,8 @@ void readBtn()
                         pwm -= 30;
                 analogWrite(ledPin, pwm);
                 digitalWrite(4, LOW);
+                //Serial.println("Button 1 pressed");
+                tft.fillRect(80, 60, 160, 120, tft.Color565(0, 255, 0));
         }
 
         if (digitalRead(A0) && (btn1Releases == 0)) {
@@ -236,6 +255,8 @@ void readBtn()
                 btn1Presses = 0;
                 btn1Pushed = 0;
                 digitalWrite(4, HIGH);
+                //Serial.println("Button 1 released");
+                tft.fillRect(80, 60, 160, 120, tft.Color565(0, 0, 0));
         }
 }
 
@@ -376,8 +397,9 @@ int parsechar(unsigned char current_char)
         case GOTBRACKET:
                 if (isdigit(current_char)) {
                         switchstate(INNUM);
-                        tmpnum = 0;
-                        tmpnum = tmpnum*10 + (current_char - '0');
+                        //tmpnum = 0;
+                        //tmpnum = tmpnum*10 + (current_char - '0');
+                        tmpnum = (current_char - '0');
                         return 0;
                 } 
                 else {
